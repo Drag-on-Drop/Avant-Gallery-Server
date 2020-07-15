@@ -16,7 +16,7 @@ curl "${API}${URL_PATH}/" \
       "password_confirmation": "'"${PASSWORD}"'",
       "location": "",
       "biography": "",
-      "artwork": ""
+      "artwork": []
     }
   }'
 
