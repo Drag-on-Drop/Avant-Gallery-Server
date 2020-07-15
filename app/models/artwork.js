@@ -6,7 +6,7 @@ const artworkSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  artName: {
+  name: {
     type: String,
     required: true
   },

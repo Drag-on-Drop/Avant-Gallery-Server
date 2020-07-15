@@ -9,7 +9,7 @@ curl "${API}${URL_PATH}" \
   --header "Content-Type: application/json" \
   --header "Authorization: Bearer ${TOKEN}" \
   --data '{
-    "collection": {
+    "artwork": {
       "imageUrl": "'"${IMAGEURL}"'",
       "description": "'"${DESC}"'",
       "price": "'"${PRICE}"'",
