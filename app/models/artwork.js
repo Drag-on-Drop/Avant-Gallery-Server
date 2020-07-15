@@ -6,6 +6,10 @@ const artworkSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
+  artName: {
+    type: String,
+    required: true
+  },
   description: {
     type: String,
     required: true
@@ -14,8 +18,9 @@ const artworkSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  name: {
-    type: String,
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     required: true
   }
 }, {
