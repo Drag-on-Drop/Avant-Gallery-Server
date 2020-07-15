@@ -42,14 +42,23 @@ router.post('/sign-up', (req, res, next) => {
     // generate a hash from the provided password, returning a promise
     .then(() => bcrypt.hash(req.body.credentials.password, bcryptSaltRounds))
     .then(hash => {
-      // return necessary params to create a user
-      return {
+      const credentials = {
+        name: req.body.credentials.name,
         email: req.body.credentials.email,
-        hashedPassword: hash
+        hashedPassword: hash,
+        location: 'a',
+        biography: 'a',
+        artwork: []
       }
+      console.log('user credentials', credentials)
+      // return necessary params to create a user
+      return credentials
     })
     // create user with provided email and hashed password
-    .then(user => User.create(user))
+    .then(user => {
+      console.log()
+      User.create(user)
+    })
     // send the new user object back with status 201, but `hashedPassword`
     // won't be send because of the `transform` in the User model
     .then(user => res.status(201).json({ user: user.toObject() }))
