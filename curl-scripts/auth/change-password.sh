@@ -9,14 +9,9 @@ curl "${API}${URL_PATH}/" \
   --header "Authorization: Token token=${TOKEN}" \
   --header "Content-Type: application/json" \
   --data '{
-    "credentials": {
-      "name": "",
-      "email": "'"${EMAIL}"'",
-      "password": "'"${PASSWORD}"'",
-      "password_confirmation": "'"${PASSWORD}"'",
-      "location": "",
-      "biography": "",
-      "artwork": []
+    "passwords": {
+      "old": "'"${OLDPW}"'",
+      "new": "'"${NEWPW}"'"
     }
   }'
 
