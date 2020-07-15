@@ -42,11 +42,17 @@ router.post('/sign-up', (req, res, next) => {
     // generate a hash from the provided password, returning a promise
     .then(() => bcrypt.hash(req.body.credentials.password, bcryptSaltRounds))
     .then(hash => {
-      // return necessary params to create a user
-      return {
+      const credentials = {
+        name: req.body.credentials.name,
         email: req.body.credentials.email,
-        hashedPassword: hash
+        hashedPassword: hash,
+        location: req.body.credentials.location || 'No Location Given',
+        biography: req.body.credentials.biography || 'No Biography Found',
+        artwork: []
       }
+      console.log('user credentials', credentials)
+      // return necessary params to create a user
+      return credentials
     })
     // create user with provided email and hashed password
     .then(user => User.create(user))
