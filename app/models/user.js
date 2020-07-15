@@ -10,6 +10,18 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  location: {
+    type: String,
+    required: true
+  },
+  biography: {
+    type: String,
+    required: true
+  },
+  // collection: {
+  //   type: Object,
+  //   required: true
+  // }
   token: String
 }, {
   timestamps: true,
