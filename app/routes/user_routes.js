@@ -46,8 +46,8 @@ router.post('/sign-up', (req, res, next) => {
         name: req.body.credentials.name,
         email: req.body.credentials.email,
         hashedPassword: hash,
-        location: 'a',
-        biography: 'a',
+        location: req.body.credentials.location || 'No Location Given',
+        biography: req.body.credentials.biography || 'No Biography Found',
         artwork: []
       }
       console.log('user credentials', credentials)
@@ -55,10 +55,7 @@ router.post('/sign-up', (req, res, next) => {
       return credentials
     })
     // create user with provided email and hashed password
-    .then(user => {
-      console.log()
-      User.create(user)
-    })
+    .then(user => User.create(user))
     // send the new user object back with status 201, but `hashedPassword`
     // won't be send because of the `transform` in the User model
     .then(user => res.status(201).json({ user: user.toObject() }))
