@@ -31,6 +31,7 @@ const router = express.Router()
 // GET /artworks
 router.get('/artworks', (req, res, next) => {
   Artwork.find()
+    .populate('owner')
     .then(artworks => {
       // `artworks` will be an array of Mongoose documents
       // we want to convert each one to a POJO, so we use `.map` to
@@ -51,12 +52,7 @@ router.get('/artworks/:id', (req, res, next) => {
     .populate('owner')
     .then(handle404)
     // if `findById` is succesful, respond with 200 and "artwork" JSON
-    .then(artwork => {
-      // console.log('artwork', artwork)
-      // artwork.populate('owner')
-      console.log('populated artwork', artwork)
-      res.status(200).json({ artwork: artwork.toObject() })
-    })
+    .then(artwork => res.status(200).json({ artwork: artwork.toObject() }))
     // if an error occurs, pass it to the handler
     .catch(next)
 })
