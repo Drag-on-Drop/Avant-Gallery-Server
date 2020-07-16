@@ -12,6 +12,12 @@ const bcryptSaltRounds = 10
 // pull in error types and the logic to handle them and set status codes
 const errors = require('../../lib/custom_errors')
 
+// this is a collection of methods that help us detect situations when we need
+// to throw a custom error
+const customErrors = require('../../lib/custom_errors')
+// we'll use this function to send 404 when non-existant document is requested
+const handle404 = customErrors.handle404
+
 const BadParamsError = errors.BadParamsError
 const BadCredentialsError = errors.BadCredentialsError
 
@@ -179,6 +185,18 @@ router.delete('/sign-out', requireToken, (req, res, next) => {
   // save the token and respond with 204
   req.user.save()
     .then(() => res.sendStatus(204))
+    .catch(next)
+})
+
+// SHOW
+// GET /artworks/5a7db6c74d55bc51bdf39793
+router.get('/artists/:id', (req, res, next) => {
+  // req.params.id will be set based on the `:id` in the route
+  User.findById(req.params.id)
+    .then(handle404)
+    // if `findById` is succesful, respond with 200 and "artwork" JSON
+    .then(artist => res.status(200).json({ artist: artist.toObject() }))
+    // if an error occurs, pass it to the handler
     .catch(next)
 })
 
