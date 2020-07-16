@@ -12,6 +12,12 @@ const bcryptSaltRounds = 10
 // pull in error types and the logic to handle them and set status codes
 const errors = require('../../lib/custom_errors')
 
+// this is a collection of methods that help us detect situations when we need
+// to throw a custom error
+const customErrors = require('../../lib/custom_errors')
+// we'll use this function to send 404 when non-existant document is requested
+const handle404 = customErrors.handle404
+
 const BadParamsError = errors.BadParamsError
 const BadCredentialsError = errors.BadCredentialsError
 
@@ -42,11 +48,17 @@ router.post('/sign-up', (req, res, next) => {
     // generate a hash from the provided password, returning a promise
     .then(() => bcrypt.hash(req.body.credentials.password, bcryptSaltRounds))
     .then(hash => {
-      // return necessary params to create a user
-      return {
+      const credentials = {
+        name: req.body.credentials.name,
         email: req.body.credentials.email,
-        hashedPassword: hash
+        hashedPassword: hash,
+        location: req.body.credentials.location || 'No Location Given',
+        biography: req.body.credentials.biography || 'No Biography Found',
+        artwork: []
       }
+      console.log('user credentials', credentials)
+      // return necessary params to create a user
+      return credentials
     })
     // create user with provided email and hashed password
     .then(user => User.create(user))
@@ -129,12 +141,62 @@ router.patch('/change-password', requireToken, (req, res, next) => {
     .catch(next)
 })
 
+// UPDATE artist
+// PATCH /update-artist
+router.patch('/update-artist', requireToken, (req, res, next) => {
+  let user
+  // `req.user` will be determined by decoding the token payload
+  User.findById(req.user.id)
+  // console.log("user is", user)
+    // save user outside the promise chain
+    .then(record => {
+      user = record
+      console.log('record is', record)
+    })
+    // check that the params are
+    .then(() => {
+      const credentials = {
+        name: req.body.credentials.name || 'Anonymous',
+        location: req.body.credentials.location || 'No Location Given',
+        biography: req.body.credentials.biography || 'No Biography Found'
+      }
+      console.log('user credentials are:', credentials)
+      // return necessary params to update the user
+      return credentials
+    })
+    .then((credentials) => {
+      console.log('user credentials one level down are:', credentials)
+      user.name = credentials.name
+      user.location = credentials.location
+      user.biography = credentials.biography
+      return user.save()
+    })
+    // respond with no content and status 200
+    .then(() => res.sendStatus(204))
+    // pass any errors along to the error handler
+    .catch(next)
+})
+
+// SIGN OUT
+// DELETE /sign-out
 router.delete('/sign-out', requireToken, (req, res, next) => {
   // create a new random token for the user, invalidating the current one
   req.user.token = crypto.randomBytes(16)
   // save the token and respond with 204
   req.user.save()
     .then(() => res.sendStatus(204))
+    .catch(next)
+})
+
+// SHOW
+// GET /artworks/5a7db6c74d55bc51bdf39793
+router.get('/artists/:id', (req, res, next) => {
+  // req.params.id will be set based on the `:id` in the route
+  User.findById(req.params.id)
+    .then(handle404)
+    // if `findById` is succesful, respond with 200 and "artwork" JSON
+    .then(artist => res.status(200).json({ artist: artist.toObject() }))
+    // if an error occurs, pass it to the handler
     .catch(next)
 })
 

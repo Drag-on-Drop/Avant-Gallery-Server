@@ -1,4 +1,19 @@
-[![General Assembly Logo](https://camo.githubusercontent.com/1a91b05b8f4d44b5bbfb83abac2b0996d8e26c92/687474703a2f2f692e696d6775722e636f6d2f6b6538555354712e706e67)](https://generalassemb.ly/education/web-development-immersive)
+**Avant-Gallery** is an application with basic authentication that allows users to post artwork for other users to view.
+
+**Link to Client Repository** https://github.com/Drag-on-Drop/Avant-Gallery-Client
+**Link to Heroku Site**
+**Link to Application**
+
+**Technologies Used**
+Express
+
+**Unsolved Problems**
+Allow sharing of actual images vs. image urls
+
+**Planning, Process and Problem Solving Strategy**
+
+Planning started with building the wireframes and entity relationship diagram.
+Once
 
 # express-api-template
 

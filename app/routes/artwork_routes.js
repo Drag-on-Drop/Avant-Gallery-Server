@@ -3,8 +3,8 @@ const express = require('express')
 // Passport docs: http://www.passportjs.org/docs/
 const passport = require('passport')
 
-// pull in Mongoose model for examples
-const Example = require('../models/example')
+// pull in Mongoose model for artworks
+const Artwork = require('../models/artwork')
 
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
@@ -17,7 +17,7 @@ const handle404 = customErrors.handle404
 const requireOwnership = customErrors.requireOwnership
 
 // this is middleware that will remove blank fields from `req.body`, e.g.
-// { example: { title: '', text: 'foo' } } -> { example: { text: 'foo' } }
+// { artwork: { title: '', text: 'foo' } } -> { artwork: { text: 'foo' } }
 const removeBlanks = require('../../lib/remove_blank_fields')
 // passing this as a second argument to `router.<verb>` will make it
 // so that a token MUST be passed for that route to be available
@@ -28,43 +28,45 @@ const requireToken = passport.authenticate('bearer', { session: false })
 const router = express.Router()
 
 // INDEX
-// GET /examples
-router.get('/examples', requireToken, (req, res, next) => {
-  Example.find()
-    .then(examples => {
-      // `examples` will be an array of Mongoose documents
+// GET /artworks
+router.get('/artworks', (req, res, next) => {
+  Artwork.find()
+    .populate('owner')
+    .then(artworks => {
+      // `artworks` will be an array of Mongoose documents
       // we want to convert each one to a POJO, so we use `.map` to
       // apply `.toObject` to each one
-      return examples.map(example => example.toObject())
+      return artworks.map(artwork => artwork.toObject())
     })
-    // respond with status 200 and JSON of the examples
-    .then(examples => res.status(200).json({ examples: examples }))
+    // respond with status 200 and JSON of the artworks
+    .then(artworks => res.status(200).json({ artworks: artworks }))
     // if an error occurs, pass it to the handler
     .catch(next)
 })
 
 // SHOW
-// GET /examples/5a7db6c74d55bc51bdf39793
-router.get('/examples/:id', requireToken, (req, res, next) => {
+// GET /artworks/5a7db6c74d55bc51bdf39793
+router.get('/artworks/:id', (req, res, next) => {
   // req.params.id will be set based on the `:id` in the route
-  Example.findById(req.params.id)
+  Artwork.findById(req.params.id)
+    .populate('owner')
     .then(handle404)
-    // if `findById` is succesful, respond with 200 and "example" JSON
-    .then(example => res.status(200).json({ example: example.toObject() }))
+    // if `findById` is succesful, respond with 200 and "artwork" JSON
+    .then(artwork => res.status(200).json({ artwork: artwork.toObject() }))
     // if an error occurs, pass it to the handler
     .catch(next)
 })
 
 // CREATE
-// POST /examples
-router.post('/examples', requireToken, (req, res, next) => {
-  // set owner of new example to be current user
-  req.body.example.owner = req.user.id
+// POST /artworks
+router.post('/artworks', requireToken, (req, res, next) => {
+  // set owner of new artwork to be current user
+  req.body.artwork.owner = req.user.id
 
-  Example.create(req.body.example)
-    // respond to succesful `create` with status 201 and JSON of new "example"
-    .then(example => {
-      res.status(201).json({ example: example.toObject() })
+  Artwork.create(req.body.artwork)
+    // respond to succesful `create` with status 201 and JSON of new "artwork"
+    .then(artwork => {
+      res.status(201).json({ artwork: artwork.toObject() })
     })
     // if an error occurs, pass it off to our error handler
     // the error handler needs the error message and the `res` object so that it
@@ -73,21 +75,21 @@ router.post('/examples', requireToken, (req, res, next) => {
 })
 
 // UPDATE
-// PATCH /examples/5a7db6c74d55bc51bdf39793
-router.patch('/examples/:id', requireToken, removeBlanks, (req, res, next) => {
+// PATCH /artworks/5a7db6c74d55bc51bdf39793
+router.patch('/artworks/:id', requireToken, removeBlanks, (req, res, next) => {
   // if the client attempts to change the `owner` property by including a new
   // owner, prevent that by deleting that key/value pair
-  delete req.body.example.owner
+  delete req.body.artwork.owner
 
-  Example.findById(req.params.id)
+  Artwork.findById(req.params.id)
     .then(handle404)
-    .then(example => {
+    .then(artwork => {
       // pass the `req` object and the Mongoose record to `requireOwnership`
       // it will throw an error if the current user isn't the owner
-      requireOwnership(req, example)
+      requireOwnership(req, artwork)
 
       // pass the result of Mongoose's `.update` to the next `.then`
-      return example.updateOne(req.body.example)
+      return artwork.updateOne(req.body.artwork)
     })
     // if that succeeded, return 204 and no JSON
     .then(() => res.sendStatus(204))
@@ -96,15 +98,15 @@ router.patch('/examples/:id', requireToken, removeBlanks, (req, res, next) => {
 })
 
 // DESTROY
-// DELETE /examples/5a7db6c74d55bc51bdf39793
-router.delete('/examples/:id', requireToken, (req, res, next) => {
-  Example.findById(req.params.id)
+// DELETE /artworks/5a7db6c74d55bc51bdf39793
+router.delete('/artworks/:id', requireToken, (req, res, next) => {
+  Artwork.findById(req.params.id)
     .then(handle404)
-    .then(example => {
-      // throw an error if current user doesn't own `example`
-      requireOwnership(req, example)
-      // delete the example ONLY IF the above didn't throw
-      example.deleteOne()
+    .then(artwork => {
+      // throw an error if current user doesn't own `artwork`
+      requireOwnership(req, artwork)
+      // delete the artwork ONLY IF the above didn't throw
+      artwork.deleteOne()
     })
     // send back 204 and no content if the deletion succeeded
     .then(() => res.sendStatus(204))

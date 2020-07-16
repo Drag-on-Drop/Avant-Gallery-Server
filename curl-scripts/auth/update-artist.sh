@@ -1,21 +1,17 @@
 #!/bin/bash
 
 API="http://localhost:4741"
-URL_PATH="/sign-up"
+URL_PATH="/update-artist"
 
 curl "${API}${URL_PATH}" \
   --include \
-  --request POST \
+  --request PATCH \
+  --header "Authorization: Token token=${TOKEN}" \
   --header "Content-Type: application/json" \
   --data '{
     "credentials": {
       "name": "'"${NAME}"'",
-      "email": "'"${EMAIL}"'",
-      "password": "'"${PASSWORD}"'",
-      "password_confirmation": "'"${PASSWORD}"'",
       "location": "'"${LOC}"'",
       "biography": "'"${BIO}"'"
     }
   }'
-
-echo
