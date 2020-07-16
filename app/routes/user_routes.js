@@ -145,8 +145,8 @@ router.patch('/update-artist', requireToken, (req, res, next) => {
     // save user outside the promise chain
     .then(record => {
       user = record
-      console.log("record is", record)
-     })
+      console.log('record is', record)
+    })
     // check that the params are
     .then(() => {
       const credentials = {
