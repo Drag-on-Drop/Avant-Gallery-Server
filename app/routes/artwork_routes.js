@@ -29,7 +29,7 @@ const router = express.Router()
 
 // INDEX
 // GET /artworks
-router.get('/artworks', requireToken, (req, res, next) => {
+router.get('/artworks', (req, res, next) => {
   Artwork.find()
     .then(artworks => {
       // `artworks` will be an array of Mongoose documents
@@ -45,7 +45,7 @@ router.get('/artworks', requireToken, (req, res, next) => {
 
 // SHOW
 // GET /artworks/5a7db6c74d55bc51bdf39793
-router.get('/artworks/:id', requireToken, (req, res, next) => {
+router.get('/artworks/:id', (req, res, next) => {
   // req.params.id will be set based on the `:id` in the route
   Artwork.findById(req.params.id)
     .then(handle404)
