@@ -135,8 +135,8 @@ router.patch('/change-password', requireToken, (req, res, next) => {
     .catch(next)
 })
 
-// CHANGE password
-// PATCH /change-password
+// UPDATE artist
+// PATCH /update-artist
 router.patch('/update-artist', requireToken, (req, res, next) => {
   let user
   // `req.user` will be determined by decoding the token payload
@@ -145,8 +145,8 @@ router.patch('/update-artist', requireToken, (req, res, next) => {
     // save user outside the promise chain
     .then(record => {
       user = record
-      console.log("record is", record)
-     })
+      console.log('record is', record)
+    })
     // check that the params are
     .then(() => {
       const credentials = {
