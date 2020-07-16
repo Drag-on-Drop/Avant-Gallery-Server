@@ -135,6 +135,44 @@ router.patch('/change-password', requireToken, (req, res, next) => {
     .catch(next)
 })
 
+// CHANGE password
+// PATCH /change-password
+router.patch('/update-artist', requireToken, (req, res, next) => {
+  let user
+  // `req.user` will be determined by decoding the token payload
+  User.findById(req.user.id)
+  // console.log("user is", user)
+    // save user outside the promise chain
+    .then(record => {
+      user = record
+      console.log("record is", record)
+     })
+    // check that the params are
+    .then(() => {
+      const credentials = {
+        name: req.body.credentials.name || 'Anonymous',
+        location: req.body.credentials.location || 'No Location Given',
+        biography: req.body.credentials.biography || 'No Biography Found'
+      }
+      console.log('user credentials are:', credentials)
+      // return necessary params to update the user
+      return credentials
+    })
+    .then((credentials) => {
+      console.log('user credentials one level down are:', credentials)
+      user.name = credentials.name
+      user.location = credentials.location
+      user.biography = credentials.biography
+      return user.save()
+    })
+    // respond with no content and status 200
+    .then(() => res.sendStatus(204))
+    // pass any errors along to the error handler
+    .catch(next)
+})
+
+// SIGN OUT
+// DELETE /sign-out
 router.delete('/sign-out', requireToken, (req, res, next) => {
   // create a new random token for the user, invalidating the current one
   req.user.token = crypto.randomBytes(16)
