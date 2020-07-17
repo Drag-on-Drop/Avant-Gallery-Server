@@ -188,6 +188,14 @@ router.delete('/sign-out', requireToken, (req, res, next) => {
     .catch(next)
 })
 
+// Index (similar to show, but without id)
+router.get('/artists', (req, res, next) => {
+  User.find()
+    .then(handle404)
+    .then(artist => res.status(200).json({ artist: artist.toObject() }))
+    .catch(next)
+})
+
 // SHOW
 // GET /artworks/5a7db6c74d55bc51bdf39793
 router.get('/artists/:id', (req, res, next) => {
