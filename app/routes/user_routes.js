@@ -34,8 +34,9 @@ const router = express.Router()
 router.get('/view-artists', (req, res, next) => {
   User.find()
     .then(users => {
-      console.log(users.toObject())
-      res.json({ users: users.toObject() })
+      const userList = users.map(user => user.toObject())
+      console.log(userList)
+      res.json({ artists: userList })
     })
     .catch(next)
 })
@@ -204,7 +205,10 @@ router.get('/artists/:id', (req, res, next) => {
   User.findById(req.params.id)
     .then(handle404)
     // if `findById` is succesful, respond with 200 and "artwork" JSON
-    .then(artist => res.status(200).json({ artist: artist.toObject() }))
+    .then(artist => {
+      console.log(artist)
+      return res.status(200).json({ artist: artist.toObject() })
+    })
     // if an error occurs, pass it to the handler
     .catch(next)
 })
