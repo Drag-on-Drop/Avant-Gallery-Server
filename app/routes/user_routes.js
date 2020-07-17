@@ -31,6 +31,15 @@ const requireToken = passport.authenticate('bearer', { session: false })
 // instantiate a router (mini app that only handles routes)
 const router = express.Router()
 
+router.get('/view-artists', (req, res, next) => {
+  User.find()
+    .then(users => {
+      console.log(users.toObject())
+      res.json({ users: users.toObject() })
+    })
+    .catch(next)
+})
+
 // SIGN UP
 // POST /sign-up
 router.post('/sign-up', (req, res, next) => {
