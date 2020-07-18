@@ -1,3 +1,4 @@
+import { name } from '../models/user'
 const express = require('express')
 // jsonwebtoken docs: https://github.com/auth0/node-jsonwebtoken
 const crypto = require('crypto')
@@ -5,7 +6,6 @@ const crypto = require('crypto')
 const passport = require('passport')
 // bcrypt docs: https://github.com/kelektiv/node.bcrypt.js
 const bcrypt = require('bcrypt')
-
 // see above for explanation of "salting", 10 rounds is recommended
 const bcryptSaltRounds = 10
 
@@ -205,6 +205,15 @@ router.get('/artists/:id', (req, res, next) => {
     // if `findById` is succesful, respond with 200 and "artwork" JSON
     .then(artist => res.status(200).json({ artist: artist.toObject() }))
     // if an error occurs, pass it to the handler
+    .catch(next)
+})
+// DELETE
+router.delete('/artists/:id', requireToken, (req, res, next) => {
+  // req.params.id will be set based on the ':id' in the route
+  User.findById(req.params.id)
+    .then(handle404)
+    .then(artist => res.status(200).json({ artist: artist.toObject() }))
+  name.deleteOne()
     .catch(next)
 })
 
