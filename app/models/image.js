@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const artworkSchema = new mongoose.Schema({
+const imageSchema = new mongoose.Schema({
   imageUrl: {
     type: String,
     required: true,
@@ -27,4 +27,4 @@ const artworkSchema = new mongoose.Schema({
   timestamps: true
 })
 
-module.exports = mongoose.model('Artwork', artworkSchema)
+module.exports = mongoose.model('Image', imageSchema)

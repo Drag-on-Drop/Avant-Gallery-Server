@@ -3,8 +3,8 @@ const express = require('express')
 // Passport docs: http://www.passportjs.org/docs/
 const passport = require('passport')
 
-// pull in Mongoose model for artworks
-const Artwork = require('../models/artwork')
+// pull in Mongoose model for images
+const Image = require('../models/image')
 const User = require('../models/user')
 
 // this is a collection of methods that help us detect situations when we need
@@ -18,7 +18,7 @@ const handle404 = customErrors.handle404
 const requireOwnership = customErrors.requireOwnership
 
 // this is middleware that will remove blank fields from `req.body`, e.g.
-// { artwork: { title: '', text: 'foo' } } -> { artwork: { text: 'foo' } }
+// { image: { title: '', text: 'foo' } } -> { image: { text: 'foo' } }
 const removeBlanks = require('../../lib/remove_blank_fields')
 // passing this as a second argument to `router.<verb>` will make it
 // so that a token MUST be passed for that route to be available
@@ -29,77 +29,81 @@ const requireToken = passport.authenticate('bearer', { session: false })
 const router = express.Router()
 
 // INDEX
-// GET /artworks
-router.get('/artworks', (req, res, next) => {
-  Artwork.find()
+// GET /images
+router.get('/images', (req, res, next) => {
+  Image.find()
     .populate('owner')
-    .then(artworks => {
-      // `artworks` will be an array of Mongoose documents
+    .then(images => {
+      // `images` will be an array of Mongoose documents
       // we want to convert each one to a POJO, so we use `.map` to
       // apply `.toObject` to each one
-      return artworks.map(artwork => artwork.toObject())
+      return images.map(image => image.toObject())
     })
-    // respond with status 200 and JSON of the artworks
-    .then(artworks => res.status(200).json({ artworks: artworks }))
+    // respond with status 200 and JSON of the images
+    .then(images => res.status(200).json({ images: images }))
     // if an error occurs, pass it to the handler
     .catch(next)
 })
 
 // SHOW
-// GET /artworks/5a7db6c74d55bc51bdf39793
-router.get('/artworks/:id', (req, res, next) => {
+// GET /images/5a7db6c74d55bc51bdf39793
+router.get('/images/:id', (req, res, next) => {
   // req.params.id will be set based on the `:id` in the route
-  Artwork.findById(req.params.id)
+  Image.findById(req.params.id)
     .populate('owner')
     .then(handle404)
-    // if `findById` is succesful, respond with 200 and "artwork" JSON
-    .then(artwork => res.status(200).json({ artwork: artwork.toObject() }))
+    // if `findById` is succesful, respond with 200 and "image" JSON
+    .then(image => res.status(200).json({ image: image.toObject() }))
     // if an error occurs, pass it to the handler
     .catch(next)
 })
 
-const userAddArt = function (userId, artwork) {
+const userAddArt = function (userId, image) {
   User.findById(userId)
     .then(user => {
-      // console.log('user.artwork', user.artwork)
-      user.artwork.push(artwork)
-      // console.log('user.artwork after push', user.artwork)
+      // console.log('user.image', user.image)
+      user.image.push(image)
+      // console.log('user.image after push', user.image)
       return user.save()
     })
 }
 
 // CREATE
-// POST /artworks
-router.post('/artworks', requireToken, (req, res, next) => {
-  // set owner of new artwork to be current user
-  req.body.artwork.owner = req.user.id
+// POST /images
+router.post('/images', requireToken, (req, res, next) => {
+  // set owner of new image to be current user
+  req.body.image.owner = req.user.id
 
-  Artwork.create(req.body.artwork)
-    // respond to succesful `create` with status 201 and JSON of new "artwork"
-    .then(artwork => {
-      console.log(artwork)
-      userAddArt(req.user.id, artwork)
-      res.status(201).json({ artwork: artwork.toObject() })
+  Image.create(req.body.image)
+    // respond to succesful `create` with status 201 and JSON of new "image"
+    .then(image => {
+      console.log(image)
+      userAddArt(req.user.id, image)
+      res.status(201).json({ image: image.toObject() })
     })
     .catch(next)
 })
 
 // UPDATE
-// PATCH /artworks/5a7db6c74d55bc51bdf39793
-router.patch('/artworks/:id', requireToken, removeBlanks, (req, res, next) => {
+// PATCH /images/5a7db6c74d55bc51bdf39793
+router.patch('/images/:id', requireToken, removeBlanks, (req, res, next) => {
   // if the client attempts to change the `owner` property by including a new
   // owner, prevent that by deleting that key/value pair
-  delete req.body.artwork.owner
-
-  Artwork.findById(req.params.id)
+  //this function doesn't actually delete the id, why?
+  delete req.user._id
+  console.log("req params are:", req.params)
+  console.log('req.user has been deleted, req.user is:', req.user)
+  Image.findById(req.params.id)
     .then(handle404)
-    .then(artwork => {
+    .then(image => {
+      console.log('hello we made it')
+      console.log('req params id is', req.params.id)
       // pass the `req` object and the Mongoose record to `requireOwnership`
       // it will throw an error if the current user isn't the owner
-      requireOwnership(req, artwork)
+      requireOwnership(req, image)
 
       // pass the result of Mongoose's `.update` to the next `.then`
-      return artwork.updateOne(req.body.artwork)
+      return image.updateOne(req.body.image)
     })
     // if that succeeded, return 204 and no JSON
     .then(() => res.sendStatus(204))
@@ -108,18 +112,18 @@ router.patch('/artworks/:id', requireToken, removeBlanks, (req, res, next) => {
 })
 
 // DESTROY
-// DELETE /artworks/5a7db6c74d55bc51bdf39793
-router.delete('/artworks/:id', requireToken, (req, res, next) => {
-  Artwork.findById(req.params.id)
+// DELETE /images/5a7db6c74d55bc51bdf39793
+router.delete('/images/:id', requireToken, (req, res, next) => {
+  Image.findById(req.params.id)
     .then(handle404)
-    .then(artwork => {
-      // throw an error if current user doesn't own `artwork`
-      requireOwnership(req, artwork)
-      // delete the artwork ONLY IF the above didn't throw
-      artwork.deleteOne()
+    .then(image => {
+      // throw an error if current user doesn't own `image`
+      requireOwnership(req, image)
+      // delete the image ONLY IF the above didn't throw
+      image.deleteOne()
     })
     // send back 204 and no content if the deletion succeeded
-    .then(() => res.sendStatus(204))
+    .then(image => res.sendStatus(201).json({ image: image.toObject() }))
     // if an error occurs, pass it to the handler
     .catch(next)
 })
