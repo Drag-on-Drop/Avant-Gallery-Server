@@ -114,6 +114,7 @@ router.post('/sign-in', (req, res, next) => {
     })
     .then(user => {
       // return status 201, the email, and the new token
+      console.log(user.toObject())
       res.status(201).json({ user: user.toObject() })
     })
     .catch(next)

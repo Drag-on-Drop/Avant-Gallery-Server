@@ -46,15 +46,11 @@ router.get('/artworks', (req, res, next) => {
 })
 
 // SHOW
-// GET /artworks/5a7db6c74d55bc51bdf39793
 router.get('/artworks/:id', (req, res, next) => {
-  // req.params.id will be set based on the `:id` in the route
   Artwork.findById(req.params.id)
     .populate('owner')
     .then(handle404)
-    // if `findById` is succesful, respond with 200 and "artwork" JSON
     .then(artwork => res.status(200).json({ artwork: artwork.toObject() }))
-    // if an error occurs, pass it to the handler
     .catch(next)
 })
 
@@ -62,7 +58,7 @@ const userAddArt = function (userId, artwork) {
   User.findById(userId)
     .then(user => {
       // console.log('user.artwork', user.artwork)
-      user.artwork.push(artwork)
+      user.artwork.push(artwork._id)
       // console.log('user.artwork after push', user.artwork)
       return user.save()
     })
@@ -85,21 +81,21 @@ router.post('/artworks', requireToken, (req, res, next) => {
 })
 
 // UPDATE
-// PATCH /artworks/5a7db6c74d55bc51bdf39793
 router.patch('/artworks/:id', requireToken, removeBlanks, (req, res, next) => {
-  // if the client attempts to change the `owner` property by including a new
-  // owner, prevent that by deleting that key/value pair
-  delete req.body.artwork.owner
+  delete req.body.artwork._id
 
+  console.log('req body:', req.body)
   Artwork.findById(req.params.id)
     .then(handle404)
     .then(artwork => {
-      // pass the `req` object and the Mongoose record to `requireOwnership`
-      // it will throw an error if the current user isn't the owner
+      console.log('req params id is', req.params.id)
       requireOwnership(req, artwork)
 
-      // pass the result of Mongoose's `.update` to the next `.then`
-      return artwork.updateOne(req.body.artwork)
+      console.log('req body artwork', req.body.artwork)
+      // artwork.updateOne(req.body.artwork)
+      artwork.name = req.body.artwork.name
+      artwork.description = req.body.artwork.description
+      artwork.save()
     })
     // if that succeeded, return 204 and no JSON
     .then(() => res.sendStatus(204))
