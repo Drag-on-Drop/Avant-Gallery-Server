@@ -22,7 +22,6 @@ const BadParamsError = errors.BadParamsError
 const BadCredentialsError = errors.BadCredentialsError
 
 const User = require('../models/user')
-const Artwork = require('../models/artwork')
 
 // passing this as a second argument to `router.<verb>` will make it
 // so that a token MUST be passed for that route to be available
@@ -200,23 +199,14 @@ router.delete('/sign-out', requireToken, (req, res, next) => {
 })
 
 // SHOW
-// GET /artworks/5a7db6c74d55bc51bdf39793
 router.get('/artists/:id', (req, res, next) => {
-  // req.params.id will be set based on the `:id` in the route
   User.findById(req.params.id)
     .then(handle404)
-    // if `findById` is succesful, respond with 200 and "artwork" JSON
-    .then(artist => {
-      console.log(artist)
-      let artworks
-      Artwork.find({ owner: req.params.id })
-        .then(artList => {
-          artworks = artList
-        })
-      console.log('art for this user', artworks)
-      return res.status(200).json({ artist: artist.toObject(), artworks: artworks })
+    .then(user => {
+      console.log(user)
+      console.log('finished user find')
+      res.status(200).json({ artist: user.toObject() })
     })
-    // if an error occurs, pass it to the handler
     .catch(next)
 })
 
