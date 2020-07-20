@@ -31,6 +31,16 @@ const requireToken = passport.authenticate('bearer', { session: false })
 // instantiate a router (mini app that only handles routes)
 const router = express.Router()
 
+router.get('/view-artists', (req, res, next) => {
+  User.find()
+    .then(users => {
+      const userList = users.map(user => user.toObject())
+      console.log(userList)
+      res.json({ artists: userList })
+    })
+    .catch(next)
+})
+
 // SIGN UP
 // POST /sign-up
 router.post('/sign-up', (req, res, next) => {
@@ -189,14 +199,14 @@ router.delete('/sign-out', requireToken, (req, res, next) => {
 })
 
 // SHOW
-// GET /artworks/5a7db6c74d55bc51bdf39793
 router.get('/artists/:id', (req, res, next) => {
-  // req.params.id will be set based on the `:id` in the route
   User.findById(req.params.id)
     .then(handle404)
-    // if `findById` is succesful, respond with 200 and "artwork" JSON
-    .then(artist => res.status(200).json({ artist: artist.toObject() }))
-    // if an error occurs, pass it to the handler
+    .then(user => {
+      console.log(user)
+      console.log('finished user find')
+      res.status(200).json({ artist: user.toObject() })
+    })
     .catch(next)
 })
 

@@ -3,8 +3,7 @@ const mongoose = require('mongoose')
 const artworkSchema = new mongoose.Schema({
   imageUrl: {
     type: String,
-    required: true,
-    unique: true
+    required: true
   },
   name: {
     type: String,
