@@ -13,11 +13,20 @@ const requireToken = passport.authenticate('bearer', { session: false })
 
 const router = express.Router()
 
+const randomChars = num => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  let result = '-'
+  for (let i = 0; i < num; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length))
+  }
+  return result
+}
+
 router.post('/post-artwork', requireToken, upload.single('image'), (req, res, next) => {
   console.log('req file', req.file)
   console.log('req body', req.body)
   console.log('req body name', req.body.name)
-  s3Upload(req.file, req.body.name)
+  s3Upload(req.file, req.body.name + randomChars(16))
     .then((data) => {
       return Artwork.create({
         name: req.body.name,

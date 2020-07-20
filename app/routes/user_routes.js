@@ -22,6 +22,7 @@ const BadParamsError = errors.BadParamsError
 const BadCredentialsError = errors.BadCredentialsError
 
 const User = require('../models/user')
+const Artwork = require('../models/artwork')
 
 // passing this as a second argument to `router.<verb>` will make it
 // so that a token MUST be passed for that route to be available
@@ -207,7 +208,13 @@ router.get('/artists/:id', (req, res, next) => {
     // if `findById` is succesful, respond with 200 and "artwork" JSON
     .then(artist => {
       console.log(artist)
-      return res.status(200).json({ artist: artist.toObject() })
+      let artworks
+      Artwork.find({ owner: req.params.id })
+        .then(artList => {
+          artworks = artList
+        })
+      console.log('art for this user', artworks)
+      return res.status(200).json({ artist: artist.toObject(), artworks: artworks })
     })
     // if an error occurs, pass it to the handler
     .catch(next)
