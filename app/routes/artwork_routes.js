@@ -124,4 +124,18 @@ router.delete('/artworks/:id', requireToken, (req, res, next) => {
     .catch(next)
 })
 
+router.get('/artworks/user/:id', (req, res, next) => {
+  let artworks = []
+  Artwork.find({ owner: req.params.id })
+    .then(artList => {
+      // console.log('getting art:', artList)
+      console.log('got art')
+      // artList.foreach(art => artworks.push(art))
+      console.log('art from this queury', artList)
+      console.log('art for this user', artworks)
+      res.json({ artworks: artList })
+    })
+    .catch(next)
+})
+
 module.exports = router
