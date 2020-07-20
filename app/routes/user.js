@@ -29,7 +29,8 @@ router.get('/artists', (req, res, next) => {
 
 // UPDATE user
 // PATCH /update-user
-router.patch('/update-user', requireToken, (req, res, next) => {
+router.patch('/artists/:id/patch', requireToken, (req, res, next) => {
+  console.log('req is:', req)
   let user
   // `req.user` will be determined by decoding the token payload
   User.findById(req.user.id)
