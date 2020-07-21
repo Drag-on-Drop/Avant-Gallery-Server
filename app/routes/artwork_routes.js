@@ -31,7 +31,7 @@ const router = express.Router()
 // INDEX
 // GET /artworks
 router.get('/artworks', (req, res, next) => {
-  Artwork.find()
+  Artwork.find().sort({ _id: -1 })
     .populate('owner')
     .then(artworks => {
       // `artworks` will be an array of Mongoose documents
@@ -43,6 +43,15 @@ router.get('/artworks', (req, res, next) => {
     .then(artworks => res.status(200).json({ artworks: artworks }))
     // if an error occurs, pass it to the handler
     .catch(next)
+})
+
+router.get('/artworks/recent', (req, res, next) => {
+  console.log('req.body', req.body)
+  console.log('num requested', req.body.num)
+  Artwork.find().sort({ _id: -1 }).limit(req.body.num || 3)
+    .then(artList => {
+      res.json({ artworks: artList })
+    })
 })
 
 // SHOW
@@ -125,14 +134,8 @@ router.delete('/artworks/:id', requireToken, (req, res, next) => {
 })
 
 router.get('/artworks/user/:id', (req, res, next) => {
-  let artworks = []
   Artwork.find({ owner: req.params.id })
     .then(artList => {
-      // console.log('getting art:', artList)
-      console.log('got art')
-      // artList.foreach(art => artworks.push(art))
-      console.log('art from this queury', artList)
-      console.log('art for this user', artworks)
       res.json({ artworks: artList })
     })
     .catch(next)
