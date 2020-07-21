@@ -45,6 +45,15 @@ router.get('/artworks', (req, res, next) => {
     .catch(next)
 })
 
+router.get('/artworks/recent', (req, res, next) => {
+  console.log('req.body', req.body)
+  console.log('num requested', req.body.num)
+  Artwork.find().sort({ _id: -1 }).limit(req.body.num || 3)
+    .then(artList => {
+      res.json({ artworks: artList })
+    })
+})
+
 // SHOW
 // GET /artworks/5a7db6c74d55bc51bdf39793
 router.get('/artworks/:id', (req, res, next) => {
@@ -125,14 +134,8 @@ router.delete('/artworks/:id', requireToken, (req, res, next) => {
 })
 
 router.get('/artworks/user/:id', (req, res, next) => {
-  let artworks = []
   Artwork.find({ owner: req.params.id })
     .then(artList => {
-      // console.log('getting art:', artList)
-      console.log('got art')
-      // artList.foreach(art => artworks.push(art))
-      console.log('art from this queury', artList)
-      console.log('art for this user', artworks)
       res.json({ artworks: artList })
     })
     .catch(next)
