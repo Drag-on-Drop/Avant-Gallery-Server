@@ -95,10 +95,10 @@ router.post('/artworks', requireToken, (req, res, next) => {
 
 // UPDATE
 // PATCH /artworks/5a7db6c74d55bc51bdf39793
-router.patch('/artworks/:id', requireToken, removeBlanks, (req, res, next) => {
+router.patch('/artworks/:id/patch', requireToken, removeBlanks, (req, res, next) => {
   // if the client attempts to change the `owner` property by including a new
   // owner, prevent that by deleting that key/value pair
-  delete req.body.artwork.owner
+  delete req.body.owner
 
   Artwork.findById(req.params.id)
     .then(handle404)
@@ -107,8 +107,11 @@ router.patch('/artworks/:id', requireToken, removeBlanks, (req, res, next) => {
       // it will throw an error if the current user isn't the owner
       requireOwnership(req, artwork)
 
+      artwork.name = req.body.name
+      artwork.description = req.body.description
       // pass the result of Mongoose's `.update` to the next `.then`
-      return artwork.updateOne(req.body.artwork)
+      // return artwork.updateOne(req.body.artwork)
+      return artwork.save()
     })
     // if that succeeded, return 204 and no JSON
     .then(() => res.sendStatus(204))
@@ -134,8 +137,14 @@ router.delete('/artworks/:id', requireToken, (req, res, next) => {
 })
 
 router.get('/artworks/user/:id', (req, res, next) => {
+  let artworks = []
   Artwork.find({ owner: req.params.id })
     .then(artList => {
+      // console.log('getting art:', artList)
+      console.log('got art')
+      // artList.foreach(art => artworks.push(art))
+      console.log('art from this queury', artList)
+      console.log('art for this user', artworks)
       res.json({ artworks: artList })
     })
     .catch(next)
