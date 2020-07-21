@@ -31,7 +31,7 @@ const router = express.Router()
 // INDEX
 // GET /artworks
 router.get('/artworks', (req, res, next) => {
-  Artwork.find()
+  Artwork.find().sort({ _id: -1 })
     .populate('owner')
     .then(artworks => {
       // `artworks` will be an array of Mongoose documents
@@ -43,6 +43,15 @@ router.get('/artworks', (req, res, next) => {
     .then(artworks => res.status(200).json({ artworks: artworks }))
     // if an error occurs, pass it to the handler
     .catch(next)
+})
+
+router.get('/artworks/recent', (req, res, next) => {
+  console.log('req.body', req.body)
+  console.log('num requested', req.body.num)
+  Artwork.find().sort({ _id: -1 }).limit(req.body.num || 3)
+    .then(artList => {
+      res.json({ artworks: artList })
+    })
 })
 
 // SHOW

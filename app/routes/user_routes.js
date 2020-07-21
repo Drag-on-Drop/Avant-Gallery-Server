@@ -153,7 +153,7 @@ router.patch('/change-password', requireToken, (req, res, next) => {
 
 // UPDATE artist
 // PATCH /update-artist
-router.patch('/update-artist', requireToken, (req, res, next) => {
+router.patch('/update-artist/:id', requireToken, (req, res, next) => {
   let user
   // `req.user` will be determined by decoding the token payload
   User.findById(req.user.id)
