@@ -1,6 +1,6 @@
 const express = require('express')
 
-const Artwork = require('../models/artwork.js')
+const Image = require('../models/image.js')
 
 const s3Upload = require('../../lib/s3Upload')
 
@@ -22,44 +22,44 @@ const randomChars = num => {
   return result
 }
 
-router.post('/post-artwork', requireToken, upload.single('image'), (req, res, next) => {
+router.post('/post-image', requireToken, upload.single('image'), (req, res, next) => {
   console.log('req file', req.file)
   console.log('req body', req.body)
   console.log('req body name', req.body.name)
   s3Upload(req.file, req.body.name + randomChars(16))
     .then((data) => {
-      return Artwork.create({
+      return Image.create({
         name: req.body.name,
         description: req.body.description,
         imageUrl: data.Location,
         owner: req.user.id
       })
     })
-    .then(artwork => res.status(201).json({ artwork: artwork.toObject() }))
+    .then(image => res.status(201).json({ image: image.toObject() }))
     .catch(console.error)
 })
 
-// router.post('/artworks', requireToken, (req, res, next) => {
-//   // set owner of new artwork to be current user
-//   req.body.artwork.owner = req.user.id
+// router.post('/images', requireToken, (req, res, next) => {
+//   // set owner of new image to be current user
+//   req.body.image.owner = req.user.id
 //
-//   Artwork.create(req.body.artwork)
-//     // respond to succesful `create` with status 201 and JSON of new "artwork"
-//     .then(artwork => {
-//       console.log(artwork)
-//       userAddArt(req.user.id, artwork)
-//       res.status(201).json({ artwork: artwork.toObject() })
+//   Image.create(req.body.image)
+//     // respond to succesful `create` with status 201 and JSON of new "image"
+//     .then(image => {
+//       console.log(image)
+//       userAddArt(req.user.id, image)
+//       res.status(201).json({ image: image.toObject() })
 //     })
 //     .catch(next)
 // })
 
-router.get('/get-artwork', (req, res, next) => {
-  Artwork.find()
+router.get('/get-image', (req, res, next) => {
+  Image.find()
     .populate('owner')
-    .then(artworks => {
-      return artworks.map(artwork => artwork.toObject())
+    .then(images => {
+      return images.map(image => image.toObject())
     })
-    .then(artworks => res.status(200).json({ artworks: artworks }))
+    .then(images => res.status(200).json({ images: images }))
     .catch(next)
 })
 

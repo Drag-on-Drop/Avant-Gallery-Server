@@ -1,4 +1,4 @@
-**Avant-Gallery** is an application with basic authentication that allows users to post artwork for other users to view.
+**Avant-Gallery** is an application with basic authentication that allows users to post image for other users to view.
 
 **Link to Client Repository** https://github.com/Drag-on-Drop/Avant-Gallery-Client
 **Link to Heroku Site**

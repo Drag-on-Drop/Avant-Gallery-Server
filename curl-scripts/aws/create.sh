@@ -1,7 +1,7 @@
 #!/bin/bash
 
 API="http://localhost:4741"
-URL_PATH="/post-artwork"
+URL_PATH="/post-image"
 
 curl "${API}${URL_PATH}" \
   --include \

@@ -5,9 +5,9 @@ const cors = require('cors')
 
 // require route files
 // const exampleRoutes = require('./app/routes/example_routes')
-const userRoutes = require('./app/routes/user_routes')
-const artworkRoutes = require('./app/routes/artwork_routes')
-const awsRoutes = require('./app/routes/aws_routes')
+const userRoutes = require('./app/routes/user')
+const imageRoutes = require('./app/routes/image')
+const awsRoutes = require('./app/routes/aws')
 
 // require middleware
 const errorHandler = require('./lib/error_handler')
@@ -66,7 +66,7 @@ app.use(requestLogger)
 // register route files
 // app.use(exampleRoutes)
 app.use(userRoutes)
-app.use(artworkRoutes)
+app.use(imageRoutes)
 app.use(awsRoutes)
 // register error handling middleware
 // note that this comes after the route middlewares, because it needs to be

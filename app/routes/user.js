@@ -5,43 +5,36 @@ const crypto = require('crypto')
 const passport = require('passport')
 // bcrypt docs: https://github.com/kelektiv/node.bcrypt.js
 const bcrypt = require('bcrypt')
-
 // see above for explanation of "salting", 10 rounds is recommended
 const bcryptSaltRounds = 10
-
 // pull in error types and the logic to handle them and set status codes
 const errors = require('../../lib/custom_errors')
-
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
 const customErrors = require('../../lib/custom_errors')
 // we'll use this function to send 404 when non-existant document is requested
 const handle404 = customErrors.handle404
-
 const BadParamsError = errors.BadParamsError
 const BadCredentialsError = errors.BadCredentialsError
 
 const User = require('../models/user')
-
 // passing this as a second argument to `router.<verb>` will make it
 // so that a token MUST be passed for that route to be available
 // it will also set `res.user`
 const requireToken = passport.authenticate('bearer', { session: false })
-
 // instantiate a router (mini app that only handles routes)
 const router = express.Router()
 
-router.get('/view-artists', (req, res, next) => {
+router.get('/view-users', (req, res, next) => {
   User.find()
     .then(users => {
       const userList = users.map(user => user.toObject())
       console.log(userList)
-      res.json({ artists: userList })
+      res.json({ users: userList })
     })
     .catch(next)
 })
 
-// SIGN UP
 // POST /sign-up
 router.post('/sign-up', (req, res, next) => {
   // start a promise chain, so that any errors will pass to `handle`
@@ -64,7 +57,7 @@ router.post('/sign-up', (req, res, next) => {
         hashedPassword: hash,
         location: req.body.credentials.location || 'No Location Given',
         biography: req.body.credentials.biography || 'No Biography Found',
-        artwork: []
+        image: []
       }
       console.log('user credentials', credentials)
       // return necessary params to create a user
@@ -79,7 +72,6 @@ router.post('/sign-up', (req, res, next) => {
     .catch(next)
 })
 
-// SIGN IN
 // POST /sign-in
 router.post('/sign-in', (req, res, next) => {
   const pw = req.body.credentials.password
@@ -119,7 +111,6 @@ router.post('/sign-in', (req, res, next) => {
     .catch(next)
 })
 
-// CHANGE password
 // PATCH /change-password
 router.patch('/change-password', requireToken, (req, res, next) => {
   let user
@@ -145,15 +136,12 @@ router.patch('/change-password', requireToken, (req, res, next) => {
       user.hashedPassword = hash
       return user.save()
     })
-    // respond with no content and status 200
     .then(() => res.sendStatus(204))
-    // pass any errors along to the error handler
     .catch(next)
 })
 
-// UPDATE artist
-// PATCH /update-artist
-router.patch('/update-artist/:id', requireToken, (req, res, next) => {
+// PATCH /update-user
+router.patch('/update-user/:id', requireToken, (req, res, next) => {
   let user
   // `req.user` will be determined by decoding the token payload
   User.findById(req.user.id)
@@ -183,11 +171,9 @@ router.patch('/update-artist/:id', requireToken, (req, res, next) => {
     })
     // respond with no content and status 200
     .then(() => res.sendStatus(204))
-    // pass any errors along to the error handler
     .catch(next)
 })
 
-// SIGN OUT
 // DELETE /sign-out
 router.delete('/sign-out', requireToken, (req, res, next) => {
   // create a new random token for the user, invalidating the current one
@@ -199,13 +185,13 @@ router.delete('/sign-out', requireToken, (req, res, next) => {
 })
 
 // SHOW
-router.get('/artists/:id', (req, res, next) => {
+router.get('/users/:id', (req, res, next) => {
   User.findById(req.params.id)
     .then(handle404)
     .then(user => {
       console.log(user)
       console.log('finished user find')
-      res.status(200).json({ artist: user.toObject() })
+      res.status(200).json({ user: user.toObject() })
     })
     .catch(next)
 })
