@@ -8,19 +8,22 @@
 Express, MongoDB, Mongoose
 
 **Server Routes**
-get('/artworks') 
-get('/artworks/:id') 
-get('/artworks/recent') 
-get('/artworks/user/:id') [indexing art for specific user]
-patch('/artworks/:id/patch')
-post('/post-artwork')
-delete('/artworks/:id')
-post('/sign-up')
-post('/sign-in')
-patch('/change-password')
-patch('/update-artist/:id')
-delete('/sign-out')
-get('/artists/:id')
+
+|Request Type |     Path            |                 Description        |   Auth    |
+|-------------|---------------------|------------------------------------|-----------|
+| GET         |'/artworks'          | Show all Artworks                  |  Unauth   |
+| GET         |'/artworks/:id'      | View Specific Artwork              |  Unauth   |
+| GET         |'/artworks/recent'   | Return recent artwork for carousel |  Unauth   |
+| GET         |'/artworks/user/:id' | Return artwork exclusivly by a user|  Unauth   |
+| PATCH       |'/artworks/:id/patch'| Edit a user specific Artwork       |  Auth     |
+| POST        |'/post-artwork'      | Upload a piece of artwork          |  Auth     |
+| DELETE      |'/artworks/:id'      | Delete a piece of artwork          |  Auth     |
+| POST        |'/sign-up'           | sign up an account                 |  Unaut    |
+| POST        |'/Sign-in'           | Sign in with an existing account   |  Unuth    |
+| PATCH       |'/change-password'   | User Change Password               |  Auth     |
+| Delete      |'/sign-out'          | User Sign out                      |  Auth     |
+| GET         |'/artists/:id'       | View an Artists profile            |  Unauth   |
+
 
 
 **Unsolved Problems**
