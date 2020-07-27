@@ -28,6 +28,15 @@ Express, MongoDB, Mongoose
 
 **Unsolved Problems**
 
+- make a tag view - click the tag on the art the show all art with that tag
+- formatting, better spacing, css on center image
+- development of artist profile, give the artist a main pictures, possibly a carousel of their own art to give each artist their own space
+- add an about blurb to give the viewer an understanding of what the website is about
+- sign in should redirect the user to their profile
+- occasionally when you click on an artists profile, the art won't show up
+- remove "dead" code
+- fix update artist bug
+
 **Entitiy Relationship Diagram**
 
 ![Entity Relationship Diagram](https://github.com/Drag-on-Drop/Avant-Gallery-Server/blob/master/Avant%20Gallery%20ERD.PNG "Entity Relationship Diagram")
