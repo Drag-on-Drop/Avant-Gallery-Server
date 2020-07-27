@@ -11,7 +11,7 @@ Express, MongoDB, Mongoose
 get('/artworks') 
 get('/artworks/:id') 
 get('/artworks/recent') 
-get('/artworks/user/:id')
+get('/artworks/user/:id') [indexing art for specific user]
 patch('/artworks/:id/patch')
 post('/post-artwork')
 delete('/artworks/:id')
