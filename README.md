@@ -5,7 +5,10 @@
 **[Deployed Client Application](https://drag-on-drop.github.io/Avant-Gallery-Client/#/)**
 
 **Technologies Used**
-Amazon Web Services S3, Express, MongoDB, Mongoose
+- Amazon Web Services S3
+- Express
+- MongoDB
+- Mongoose
 
 **Server Routes**
 
