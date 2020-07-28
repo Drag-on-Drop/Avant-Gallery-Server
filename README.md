@@ -24,18 +24,16 @@ Express, MongoDB, Mongoose
 | Delete      |'/sign-out'          | User Sign out                      |  Auth     |
 | GET         |'/artists/:id'       | View an Artists profile            |  Unauth   |
 
-
-
-**Unsolved Problems**
-
-- make a tag view - click the tag on the art the show all art with that tag
-- formatting, better spacing, css on center image
-- development of artist profile, give the artist a main pictures, possibly a carousel of their own art to give each artist their own space
-- add an about blurb to give the viewer an understanding of what the website is about
-- sign in should redirect the user to their profile
-- occasionally when you click on an artists profile, the art won't show up
-- remove "dead" code
-- fix update artist bug
+**Unsolved Problems & Planned Features**
+- Add image tags to files to allow users to find more images with the same tag
+- CSS formatting, spacing & styling
+- Artist profile features: artist profile picture, main pictures, carousel of featured art
+- About the gallery info section
+- Sign in should redirect the user to their profile
+- Clean up development code
+- Fix: Remove 'by' in artist profile card view
+- Fix: viewing an artist profile won't always populate their work
+- Fix: updating a profile will pre-fill forms with old data despite updating the database
 
 **Entitiy Relationship Diagram**
 
