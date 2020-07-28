@@ -31,7 +31,7 @@ Express, MongoDB, Mongoose
 - About the gallery info section
 - Sign in should redirect the user to their profile
 - Clean up development code
-- Fix: Remove 'by' in artist profile card view
+- Fix: remove 'by' in artist profile card view
 - Fix: viewing an artist profile won't always populate their work
 - Fix: updating a profile will pre-fill forms with old data despite updating the database
 
