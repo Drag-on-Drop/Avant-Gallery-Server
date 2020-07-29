@@ -139,6 +139,7 @@ router.delete('/artworks/:id', requireToken, (req, res, next) => {
 router.get('/artworks/user/:id', (req, res, next) => {
   let artworks = []
   Artwork.find({ owner: req.params.id })
+    .populate('owner')
     .then(artList => {
       // console.log('getting art:', artList)
       console.log('got art')
