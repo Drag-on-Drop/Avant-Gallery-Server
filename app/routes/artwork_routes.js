@@ -45,10 +45,11 @@ router.get('/artworks', (req, res, next) => {
     .catch(next)
 })
 
+// Carosel get recent artworks
 router.get('/artworks/recent', (req, res, next) => {
   console.log('req.body', req.body)
   console.log('num requested', req.body.num)
-  Artwork.find().sort({ _id: -1 }).limit(req.body.num || 3)
+  Artwork.find().sort({ _id: -1 }).limit(5)
     .then(artList => {
       res.json({ artworks: artList })
     })
@@ -139,6 +140,7 @@ router.delete('/artworks/:id', requireToken, (req, res, next) => {
 router.get('/artworks/user/:id', (req, res, next) => {
   let artworks = []
   Artwork.find({ owner: req.params.id })
+    .populate('owner')
     .then(artList => {
       // console.log('getting art:', artList)
       console.log('got art')
