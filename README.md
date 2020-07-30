@@ -32,11 +32,7 @@
 - CSS formatting, spacing & styling
 - Artist profile features: artist profile picture, main pictures, carousel of featured art
 - About the gallery info section
-- Sign in should redirect the user to their profile
-- Clean up development code
-- Fix: remove 'by' in artist profile card view
 - Fix: viewing an artist profile won't always populate their work
-- Fix: updating a profile will pre-fill forms with old data despite updating the database
 
 **Entitiy Relationship Diagram**
 
