@@ -45,10 +45,11 @@ router.get('/artworks', (req, res, next) => {
     .catch(next)
 })
 
+// Carosel get recent artworks
 router.get('/artworks/recent', (req, res, next) => {
   console.log('req.body', req.body)
   console.log('num requested', req.body.num)
-  Artwork.find().sort({ _id: -1 }).limit(req.body.num || 3)
+  Artwork.find().sort({ _id: -1 }).limit(5)
     .then(artList => {
       res.json({ artworks: artList })
     })
