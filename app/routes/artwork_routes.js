@@ -48,6 +48,7 @@ router.get('/artworks', (req, res, next) => {
 // Carosel get recent artworks
 router.get('/artworks/recent', (req, res, next) => {
   Artwork.find().sort({ _id: -1 }).limit(5)
+    .populate('owner')
     .then(artList => {
       res.json({ artworks: artList })
     })
