@@ -1,4 +1,7 @@
-**Gallery D'Art** is a single page application for storing and sharing images in a virutal database. This app was inspired by the needs of artists to showcase their work in times of social distancing. Images uploaded to the database are shared in the main gallery along side the work of other artists. Viewing an artist profile will give users more details about the artist, their contact information for art inquiries and contract work, and a gallery view featuring all of that artist's work. 
+Inspired by the need for artists to showcase their work in times of social distancing, **Gallery D'Art** is a single page application for sharing art and connecting.  
+Users can create a profile and upload their artwork, which is hosted on the database and shared in the main gallery alongside all other artworks as thumbnails. Users do not need to create an account to view artworks and artists, but need an account to host art.
+Clicking on an artwork directs the user to a full-size image with a download link, a description of the artwork, date posted, and a link to the artist. Clicking on the artist link directs the user to the artist’s profile page where they can see a user location, bio, and a personal thumbnail gallery. Users are also able to index all artists and update their profiles from the navigation bar.
+Enjoy!
 
 **[Deployed Server Application](https://ancient-garden-56671.herokuapp.com)** |
 **[Client Repository](https://github.com/Drag-on-Drop/Avant-Gallery-Client)** |
