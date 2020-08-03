@@ -5,7 +5,7 @@ const passport = require('passport')
 
 // pull in Mongoose model for artworks
 const Artwork = require('../models/artwork')
-const User = require('../models/user')
+// const User = require('../models/user')
 
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
@@ -45,10 +45,10 @@ router.get('/artworks', (req, res, next) => {
     .catch(next)
 })
 
+// Carosel get recent artworks
 router.get('/artworks/recent', (req, res, next) => {
-  console.log('req.body', req.body)
-  console.log('num requested', req.body.num)
-  Artwork.find().sort({ _id: -1 }).limit(req.body.num || 3)
+  Artwork.find().sort({ _id: -1 }).limit(5)
+    .populate('owner')
     .then(artList => {
       res.json({ artworks: artList })
     })
@@ -67,17 +67,19 @@ router.get('/artworks/:id', (req, res, next) => {
     .catch(next)
 })
 
-const userAddArt = function (userId, artwork) {
-  User.findById(userId)
-    .then(user => {
-      // console.log('user.artwork', user.artwork)
-      user.artwork.push(artwork)
-      // console.log('user.artwork after push', user.artwork)
-      return user.save()
-    })
-}
+// useless?
 
-// CREATE
+// const userAddArt = function (userId, artwork) {
+//   User.findById(userId)
+//     .then(user => {
+//       // console.log('user.artwork', user.artwork)
+//       user.artwork.push(artwork)
+//       // console.log('user.artwork after push', user.artwork)
+//       return user.save()
+//     })
+// }
+
+// CREATE // this dead
 // POST /artworks
 router.post('/artworks', requireToken, (req, res, next) => {
   // set owner of new artwork to be current user
@@ -86,8 +88,7 @@ router.post('/artworks', requireToken, (req, res, next) => {
   Artwork.create(req.body.artwork)
     // respond to succesful `create` with status 201 and JSON of new "artwork"
     .then(artwork => {
-      console.log(artwork)
-      userAddArt(req.user.id, artwork)
+      // userAddArt(req.user.id, artwork)
       res.status(201).json({ artwork: artwork.toObject() })
     })
     .catch(next)
@@ -137,16 +138,9 @@ router.delete('/artworks/:id', requireToken, (req, res, next) => {
 })
 
 router.get('/artworks/user/:id', (req, res, next) => {
-  let artworks = []
   Artwork.find({ owner: req.params.id })
-    .then(artList => {
-      // console.log('getting art:', artList)
-      console.log('got art')
-      // artList.foreach(art => artworks.push(art))
-      console.log('art from this queury', artList)
-      console.log('art for this user', artworks)
-      res.json({ artworks: artList })
-    })
+    .populate('owner')
+    .then(artList => res.json({ artworks: artList }))
     .catch(next)
 })
 

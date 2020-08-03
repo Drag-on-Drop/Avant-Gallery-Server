@@ -35,7 +35,6 @@ router.get('/view-artists', (req, res, next) => {
   User.find()
     .then(users => {
       const userList = users.map(user => user.toObject())
-      console.log(userList)
       res.json({ artists: userList })
     })
     .catch(next)
@@ -66,7 +65,6 @@ router.post('/sign-up', (req, res, next) => {
         biography: req.body.credentials.biography || 'No Biography Found',
         artwork: []
       }
-      console.log('user credentials', credentials)
       // return necessary params to create a user
       return credentials
     })
@@ -161,7 +159,6 @@ router.patch('/update-artist/:id', requireToken, (req, res, next) => {
     // save user outside the promise chain
     .then(record => {
       user = record
-      console.log('record is', record)
     })
     // check that the params are
     .then(() => {
@@ -170,19 +167,17 @@ router.patch('/update-artist/:id', requireToken, (req, res, next) => {
         location: req.body.credentials.location || 'No Location Given',
         biography: req.body.credentials.biography || 'No Biography Found'
       }
-      console.log('user credentials are:', credentials)
       // return necessary params to update the user
       return credentials
     })
     .then((credentials) => {
-      console.log('user credentials one level down are:', credentials)
       user.name = credentials.name
       user.location = credentials.location
       user.biography = credentials.biography
       return user.save()
     })
     // respond with no content and status 200
-    .then(() => res.sendStatus(204))
+    .then(() => res.status(201).json({ user: user.toObject() }))
     // pass any errors along to the error handler
     .catch(next)
 })
@@ -202,11 +197,7 @@ router.delete('/sign-out', requireToken, (req, res, next) => {
 router.get('/artists/:id', (req, res, next) => {
   User.findById(req.params.id)
     .then(handle404)
-    .then(user => {
-      console.log(user)
-      console.log('finished user find')
-      res.status(200).json({ artist: user.toObject() })
-    })
+    .then(user => res.status(200).json({ artist: user.toObject() }))
     .catch(next)
 })
 
