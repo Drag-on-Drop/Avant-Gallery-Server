@@ -7,7 +7,7 @@ const passport = require('passport')
 const Artwork = require('../models/artwork')
 // const User = require('../models/user')
 
-// this is a collection of methods that help us detect situations when we need
+// collection of methods to detect situations when we need
 // to throw a custom error
 const customErrors = require('../../lib/custom_errors')
 
@@ -16,8 +16,7 @@ const handle404 = customErrors.handle404
 // we'll use this function to send 401 when a user tries to modify a resource
 // that's owned by someone else
 const requireOwnership = customErrors.requireOwnership
-
-// this is middleware that will remove blank fields from `req.body`, e.g.
+// middleware that removes blank fields from `req.body`, e.g.
 // { artwork: { title: '', text: 'foo' } } -> { artwork: { text: 'foo' } }
 const removeBlanks = require('../../lib/remove_blank_fields')
 // passing this as a second argument to `router.<verb>` will make it
@@ -29,7 +28,6 @@ const requireToken = passport.authenticate('bearer', { session: false })
 const router = express.Router()
 
 // INDEX
-// GET /artworks
 router.get('/artworks', (req, res, next) => {
   Artwork.find().sort({ _id: -1 })
     .populate('owner')
@@ -55,7 +53,6 @@ router.get('/artworks/recent', (req, res, next) => {
 })
 
 // SHOW
-// GET /artworks/5a7db6c74d55bc51bdf39793
 router.get('/artworks/:id', (req, res, next) => {
   // req.params.id will be set based on the `:id` in the route
   Artwork.findById(req.params.id)
@@ -67,24 +64,10 @@ router.get('/artworks/:id', (req, res, next) => {
     .catch(next)
 })
 
-// useless?
-
-// const userAddArt = function (userId, artwork) {
-//   User.findById(userId)
-//     .then(user => {
-//       // console.log('user.artwork', user.artwork)
-//       user.artwork.push(artwork)
-//       // console.log('user.artwork after push', user.artwork)
-//       return user.save()
-//     })
-// }
-
-// CREATE // this dead
-// POST /artworks
+// CREATE
 router.post('/artworks', requireToken, (req, res, next) => {
   // set owner of new artwork to be current user
   req.body.artwork.owner = req.user.id
-
   Artwork.create(req.body.artwork)
     // respond to succesful `create` with status 201 and JSON of new "artwork"
     .then(artwork => {
@@ -95,8 +78,7 @@ router.post('/artworks', requireToken, (req, res, next) => {
 })
 
 // UPDATE
-// PATCH /artworks/5a7db6c74d55bc51bdf39793
-router.patch('/artworks/:id/patch', requireToken, removeBlanks, (req, res, next) => {
+router.patch('/artworks/:id', requireToken, removeBlanks, (req, res, next) => {
   // if the client attempts to change the `owner` property by including a new
   // owner, prevent that by deleting that key/value pair
   delete req.body.owner
@@ -116,12 +98,10 @@ router.patch('/artworks/:id/patch', requireToken, removeBlanks, (req, res, next)
     })
     // if that succeeded, return 204 and no JSON
     .then(() => res.sendStatus(204))
-    // if an error occurs, pass it to the handler
     .catch(next)
 })
 
 // DESTROY
-// DELETE /artworks/5a7db6c74d55bc51bdf39793
 router.delete('/artworks/:id', requireToken, (req, res, next) => {
   Artwork.findById(req.params.id)
     .then(handle404)
@@ -133,7 +113,6 @@ router.delete('/artworks/:id', requireToken, (req, res, next) => {
     })
     // send back 204 and no content if the deletion succeeded
     .then(() => res.sendStatus(204))
-    // if an error occurs, pass it to the handler
     .catch(next)
 })
 
